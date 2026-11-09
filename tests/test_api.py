@@ -3,6 +3,13 @@ def test_root_increments(client):
     assert client.get("/").json() == {"visites": 2}
 
 
+def test_root_returns_version_header(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "X-Visites-Version" in response.headers
+    assert response.headers["X-Visites-Version"] == "0.1.0"
+
+
 def test_health_ok(client):
     resp = client.get("/health")
     assert resp.status_code == 200
