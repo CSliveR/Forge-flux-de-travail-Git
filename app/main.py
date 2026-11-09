@@ -35,6 +35,13 @@ def root():
     return {"visites": n}
 
 
+@app.post("/reset")
+def reset():
+    # remet le compteur de visites a zero
+    r.set("visites", 0)
+    return {"visites": 0}
+
+
 @app.get("/health")
 def health():
     try:
