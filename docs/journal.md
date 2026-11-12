@@ -75,19 +75,28 @@
   Il faut exiger les **deux** dans le ruleset (c'est le nom du job, pas celui du workflow).
 
 ### Contrôle obligatoire (étape 4)
-- Checks requis à ajouter dans le ruleset `main` : `test (py3.12)`, `test (py3.13)` (à faire par
-  l'admin du dépôt, ruleset aussi à passer de *Disabled* à *Active*).
+- Checks requis dans le ruleset `main` (actif) : `test (py3.12)`, `test (py3.13)`. Un push direct
+  sur `main` est refusé : « Changes must be made through a pull request », « 2 of 2 required status
+  checks are expected », « Commits must have verified signatures ».
+- PR de test cassé : PR #13 (@CSliveR) bloquée par l'échec du test sur l'en-tête
+  `X-Visites-Version` (« Required statuses must pass »), puis débloquée et fusionnée
+  après un commit correctif rétablissant la valeur attendue.
 - Bypass : un administrateur qui coche « bypass » fusionne malgré un check rouge. Ce droit doit être
   réservé à très peu de personnes (admin du dépôt, rôle d'urgence), jamais à tout le monde ;
   chaque contournement est tracé dans l'historique de la PR (« bypassed rule ») et dans
   Settings → Rules → Insights / le journal d'audit.
 
 ### act en local (étape 5)
-- act 0.2.97 (Homebrew) ; `act -l` liste le job `test`. Commande utilisée :
+- Poste macOS Apple Silicon (@jahid611) : act 0.2.97 (Homebrew) ; `act -l` liste le job `test`. Commande utilisée :
   `act pull_request --matrix python:3.13 --env SKIP=gitleaks --pull=false` → 46 s.
 - `~/.actrc` : `-P ubuntu-latest=catthehacker/ubuntu:act-latest` et
   `--container-architecture linux/arm64`. Sur Mac Apple Silicon, `linux/amd64` (émulation) fait échouer
   setup-python : `tar: Cannot mkdir: Function not implemented`.
+- Poste Linux x86_64 (@CSliveR) : `~/.actrc` configuré avec
+  `-P ubuntu-latest=catthehacker/ubuntu:act-latest` et `--container-architecture linux/amd64` ;
+  `act pull_request --matrix python:3.13` exécute tout le job `test` en local (~2 min 30 dont
+  1 min 15 pour `pre-commit` incluant `gitleaks`), jusqu'à l'échec attendu de `upload-artifact`
+  (`Unable to get the ACTIONS_RUNTIME_TOKEN env variable`).
 - Identique à GitHub : checkout, setup-python (Python 3.13.18 téléchargé), `pip install`, ruff,
   hooks pre-commit, pytest (6 passed) : mêmes commandes, mêmes résultats.
 - Ce qui diffère ou échoue en local :
