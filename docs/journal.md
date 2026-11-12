@@ -4,6 +4,7 @@
 - PR fusionnées : #1 (`POST /reset`), #2 (en-tête `X-Visites-Version`), #5 (titre du README),
   #3 (titre concurrent de #5 : conflit résolu par `git rebase origin/main`), #4 (CONTRIBUTING.md),
   #6 (pre-commit).
+- Version : tag annoté et signé (SSH) `v0.1.0` sur `599b4ca`, poussé par @CSliveR.
 
 ## TP02 — Protéger le dépôt
 - Scan de l'historique : `gitleaks git --verbose --redact --log-opts="--all" .` (gitleaks 8.30.1),
