@@ -9,19 +9,32 @@ permissions:
 
 jobs:
   test:
+    name: test (py${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13"]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python }}
+          cache: pip
+          # pas de requirements.txt : la clé du cache est calculée sur pyproject.toml
+          cache-dependency-path: pyproject.toml
+      - uses: actions/cache@v4
+        with:
+          # environnements des hooks pre-commit (ruff, gitleaks...), l'étape la plus longue
+          path: ~/.cache/pre-commit
+          key: pre-commit-py${{ matrix.python }}-${{ hashFiles('.pre-commit-config.yaml') }}
       - run: pip install -e ".[dev]"
-      - run: ruff check && ruff format --check # ruff check et ruff format --check
+      - run: ruff check && ruff format --check
       - run: pre-commit run --all-files
-      - run: pytest -q --cov=app --cov-report=xml --cov-report=html # pytest
+      - run: pytest -q --cov=app --cov-report=xml --cov-report=html
       - uses: actions/upload-artifact@v4
-        with :
-          # https://github.com/actions/upload-artifact#inputs
-          name: coverage-report
+        if: always()
+        with:
+          name: coverage-py${{ matrix.python }}
           path: htmlcov/
           retention-days: 7
