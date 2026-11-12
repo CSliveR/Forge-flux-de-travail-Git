@@ -6,6 +6,24 @@
   #6 (pre-commit).
 - Version : tag annoté et signé (SSH) `v0.1.0` sur `599b4ca`, poussé par @CSliveR.
 
+### Questions d'observation
+- Q1. Délai de changement : premier commit `21aab8b` (« feat(api): ajouter POST /reset… »)
+  le 09/11/2026 à 11 h 44, fusion de la PR #1 sur `main` à 15 h 28 : **3 h 44 min**.
+  L'essentiel du délai est de l'attente de relecture, pas du travail sur le code. À comparer
+  avec la mesure faite à la restitution.
+- Q2. Indépendant de GitHub (marche tel quel sur GitLab, Gitea, Forgejo) : Git lui-même
+  (branches, commits conventionnels, `rebase`, résolution de conflit, `push --force-with-lease`),
+  la signature SSH des commits et du tag `v0.1.0`, pre-commit et ruff, `CONTRIBUTING.md`.
+  Ce qui change : les commandes `gh` (`gh pr create`, `gh pr merge --squash`) deviennent `glab`,
+  `tea` ou l'interface web ; la « pull request » s'appelle « merge request » sur GitLab ;
+  les règles de protection de branche, la revue obligatoire et le badge « Verified »
+  se reconfigurent dans chaque forge.
+- Q3. La forge vérifie qui *pousse* (authentification du compte), pas qui a *écrit* : l'auteur
+  d'un commit est une chaîne libre (`git config user.name/user.email`), n'importe qui peut
+  écrire un commit au nom d'un autre. Si un collègue pousse un clone contenant mes commits, ou
+  si le dépôt est migré vers une autre forge, l'information « qui a poussé » est perdue.
+  La signature, elle, voyage avec le commit et se vérifie partout avec la clé publique.
+
 ## TP02 — Protéger le dépôt
 - Scan de l'historique : `gitleaks git --verbose --redact --log-opts="--all" .` (gitleaks 8.30.1),
   toutes les branches : **aucun secret trouvé**. `.gitleaksignore` est créé vide (commentaires).
