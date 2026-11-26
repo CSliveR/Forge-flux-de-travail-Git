@@ -23,7 +23,7 @@ jobs:
           cache: pip
           # pas de requirements.txt : la clé du cache est calculée sur pyproject.toml
           cache-dependency-path: pyproject.toml
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           # environnements des hooks pre-commit (ruff, gitleaks...), l'étape la plus longue
           path: ~/.cache/pre-commit
